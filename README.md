@@ -28,7 +28,7 @@ Skills are Markdown files (`SKILL.md`) with a `## Procedure / ## Pitfalls / ## V
 Copy the skills you want into your skills directory:
 
 ```bash
-git clone https://github.com/Jay-ma-devm/claude-code-skills.git
+git clone https://github.com/bokuwalily/claude-code-skills.git
 cp -r claude-code-skills/skills/* ~/.claude/skills/
 ```
 
