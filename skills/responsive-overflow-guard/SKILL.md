@@ -32,4 +32,4 @@ version: 1.0.0
 - [ ] 静的検査 PASS（grid に base 列指定あり）
 - [ ] 真の 320/360/390px で `scrollWidth <= clientWidth`（溢れ0）
 - [ ] 下ナビ等の主要要素がセル内で中央寄せ（`rect`中心が一致）
-- [ ] デプロイ後ライブURLでも本番JS/CSSに修正が反映
+- [ ] デプロイ後ライブURLでも本番JS/CSSに修正が反映（）

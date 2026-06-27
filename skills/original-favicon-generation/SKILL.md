@@ -8,7 +8,7 @@ version: 1.0.0
 
 # オリジナルfavicon/アイコン生成（sharp + png-to-ico）
 
-Vercel/Nextデフォルトのままにしない。新規Webアプリでは標準で作る。
+Vercel/Nextデフォルトのままにしない（）。新規Webアプリでは標準で作る。
 
 ## Procedure
 

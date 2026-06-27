@@ -23,6 +23,9 @@ disallowed-tools: Agent
 - `Label` は `com.<user>.<name>` 形式。dot を含まない label は load 拒否される。
 - plist の `ProgramArguments` は配列必須 (string 単体は弾かれる)。`StandardOutPath` / `StandardErrorPath` は絶対パスで明示しないと `/dev/null` に消える。
 - `gui/<uid>` domain は GUI セッション必須。ヘッドレス常駐は `system/` domain + `/Library/LaunchDaemons/` 配置 (root 権限必要)。
+- ⚠️**TCC保護領域に書けない**: launchd起動プロセスは `~/Desktop` `~/Documents` `~/Downloads` へ書くと `PermissionError: Operation not permitted`（exit 1）。Full Disk Access付与は対象が `/bin/bash`/`python3` 等になり広すぎ＆手動GUI操作要。→ **実体を非保護パス(HOME直下 `~/foo` 等)に置き、保護領域には symlink を張る**のが定石（プロセスは実体パスに書く＝TCC回避、ユーザーはDesktopから symlink で見える）。スクリプト内のパス定数は **symlink でなく実体パスを参照**させること。
+- ⚠️**`env -i` での再現テストは誤検知する**: 素環境で `claude -p` を回すと「Not logged in」やKeychainアクセス失敗で落ちるが、本物のlaunchd GUIエージェントはセキュリティセッションを保持してKeychainから認証が通る。検証は `env -i` でなく `launchctl kickstart -k gui/$(id -u)/<label>` で**本物のエージェントを実走**させてログ＆`last exit code`を見る。
+- claude CLI認証(`~/.local/bin/claude -p`)は**token/env不要**。PATHに `~/.local/bin` とnode(nvm)を通せば、login keychainの "Claude Code-credentials" から自動で認証される（本物launchd下で実績あり）。
 
 ## Verification
 
