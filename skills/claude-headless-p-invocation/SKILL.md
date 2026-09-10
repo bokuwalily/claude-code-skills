@@ -18,6 +18,11 @@ perl -e 'alarm shift; exec @ARGV' 300 claude -p "..." || echo "timeout"
 3. **MAX_THINKING_TOKENS 抑制**: 大型 prompt なら `MAX_THINKING_TOKENS=10000 claude -p ...`
 4. **stderr 分離**: `claude -p "..." 2> /tmp/claude-err.log` で error trace 別保存
 5. **stdin pipe**: `cat input.md | claude -p "summarize"` でファイル入力
+6. **launchd / 自動化から呼ぶなら MCP と hook を切る（必須）**: 文章生成・判定だけならツールは要らない。
+```bash
+claude -p --model haiku --strict-mcp-config --mcp-config '{"mcpServers":{}}' --allowedTools ''
+```
+   `--mcp-config '{}'` は `mcpServers: Invalid input` で即死する。**必ず `{"mcpServers":{}}`**。
 
 ## Pitfalls
 
@@ -26,6 +31,9 @@ perl -e 'alarm shift; exec @ARGV' 300 claude -p "..." || echo "timeout"
 - `--output-format text` 指定しないと JSON 返ってきて parse 必要
 - macOS `timeout` コマンドは GNU coreutils 必要 → `brew install coreutils` で `gtimeout` 提供
 - 並列 claude -p は token block を急速消費 → 5h 800k cap 注意
+- **launchd 下で毎回タイムアウトする（自前 timeout の SIGTERM = exit 143）のは MCP サーバ/hook の起動待ちが原因**。
+  対話セッションでは10秒で終わる同じ生成が、細い env + 高負荷だと数分かかる。stderr は空なので原因が見えない。
+  上の Procedure 6 で殺す＋タイムアウト自体も余裕を持たせる（90秒→180秒）。実測 6.5 秒に短縮（2026-07-25 note/social 自動返信の全滅を根治）
 
 ## Verification
 

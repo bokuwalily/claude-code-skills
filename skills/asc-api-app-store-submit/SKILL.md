@@ -95,3 +95,25 @@ keys.jsonを読んでJWTを生成し直叩きする。`status`で `appStoreState
   2. **APP_PRICING_REQUIRED** = 新規アプリにASCが自動生成する空のappPriceScheduleは**無効**。`POST /v1/appPriceSchedules` で USA free point を明示作成し直す(included appPrice に `"attributes":{}` 必須・既存あっても再POSTで201上書き)。
 - **年齢宣言の必須属性(欠けると REQUIRED 409 が連鎖)**: ENUM"NONE"= violence*/sexual*/profanity*/mature*/horror*/medical*/alcohol*/gamblingSimulated/contests/**gunsOrOtherWeapons**。BOOL(false)= gambling/unrestrictedWebAccess/advertising/messagingAndChat/lootBox/healthOrWellnessTopics/parentalControls/userGeneratedContent/ageAssurance。kidsAgeBand=null。**`seventeenPlus` は存在しない**(入れると UNKNOWN 409)。
 - **deliver スクショ二重UP**: deliver は1回目「missing on App Store Connect」→自動リトライで**各fileNameが2枚に重複**(6枚=3種×2)。submit前に重複削除必須=`DELETE /v1/appScreenshots/{id}`(各fileNameの2枚目以降)。**WAITING_FOR_REVIEW中は409で削除不可**→`asc.py reject <id>`(version→DEVELOPER_REJECTED)→各setをfileNameでグルーピングし1枚残して削除→`asc.py submit`で再提出。
+
+## 追補4 (2026-07-16 艦隊6本一括v1.1提出で確定)
+
+- **ITMS-90111パッチの再利用スクリプト**: `~/dev/suna-ios/tools/export_patched.sh <archive> <team> <out_dir> <bundle=profile>...`。アーカイブのBuildMachineOSBuildを25F80に書換→manual署名で-exportArchive→パッチ値とcodesign --deep --strictを自動検証。widget/appex同梱アプリは`bundle=profile`ペアを複数渡す（のこりwidget・ねむログLiveActivityで実証）。macOS 27 beta環境(26A5368g)の間は**全アプリのアップロードで必須**。
+- **fastlane build レーンは `ASC_KEY_ID/ASC_ISSUER_ID/ASC_KEY_PATH/ASC_TEAM_ID` のenv必須**（keys.jsonから読んでexportしてから叩く）。ASC_TEAM_ID漏れは「requires a development team」でarchive死。
+- **公開中アプリの更新フロー確定版**: 版数bump(project.yml)→fastlane ios build(またはxcodebuild archive)→export_patched.sh→altool→`make-version <id> <ver>`→新スクショをdeliver(`--app_version`指定・skip_metadata)→**sleep 20→dedup --apply**（deliver直後はdupが出そろわずdedupが空振りする。20秒待ってから）→`attach-build <id> <ver>`→`whatsnew`→`submit`→statusでWAITING_FOR_REVIEW裏取り→スクショはchecksumをローカルmd5と突合。
+- **attach-buildの「no VALID build」で慌てない**: buildsはmarketing version(train)単位。同じbuild番号が旧trainに存在すると`status`のgrepで誤マッチする。`/v1/builds?include=preReleaseVersion`でtrainを見て、新trainのVALIDを待つ（アップロード後5〜15分）。
+- **simctlスクショの2大罠**: ①起動直後キャプチャは空白（sleep 6〜7必須・75KB級の異常に小さいPNGは事故のサイン） ②直前に別アプリを撮っていると**ステータスバーに「◀ 前のアプリ」パンくず**が写る→terminate→launch→terminate→launchの二度起動でクリア。
+
+## 追補3 (2026-07-03 Akariで確定・初回サブスク同梱提出)
+
+- **サブスクが MISSING_METADATA から動かない最大の隠れ真因 = 審査用スクショのサイレント無効**。APIのassetDeliveryState=COMPLETE・UIプレビュー正常表示でも無効なことがある（fileNameが拡張子なし「SOURCE」等は危険信号）。直し=`DELETE /v1/subscriptionAppStoreReviewScreenshots/{id}` → 正規fileName(`xxx.png`)でPOST→PUT upload→PATCH uploaded:true+md5。**再UP後数秒で READY_TO_SUBMIT に即遷移**した。
+- **価格はAPIでは自動均等化されない**。`POST /v1/subscriptionPrices`(基準地域1件)だけだと価格1地域のみ＝MISSING_METADATA要因。直し=`GET /v1/subscriptionPricePoints/{base}/equalizations?limit=200` で174地域分のpoint取得（territoryはpoint idのbase64内 `"t"` をデコード）→全地域分POST。**一時的500 UNEXPECTED_ERRORが数十件出る**→既存territoryをGETで突合し欠落分だけ指数バックオフでリトライ。
+- **初回サブスクは reviewSubmissionItems に追加できない**（`'subscription' is not a relationship` 409）。同梱は**バージョンページの「アプリ内購入とサブスクリプション」セクション（UI）**で選択→審査提出。⚠️このセクションは**サブスクが READY_TO_SUBMIT になるまで非表示**（(オプション)表示でも初回は実質必須）。2本目以降はサブスク単独提出可。
+- 有料App契約の確認はAPI非対応→ASC Web `/business`（有料アプリ契約=有効・銀行口座=有効を目視）。契約が有効でも上記2つ（スクショ/価格）が欠けてる限りMISSING_METADATAのまま。
+- グループローカリゼーションPATCHやダミーサブスク作成による「状態再計算トリック」は**効かなかった**（フォーラム情報は不発）。
+
+## 追補5 (2026-09-10 ひとくち勇者/SheetPin/11本ストア外しで確定)
+
+- **却下(UNRESOLVED_ISSUES)後の再提出はAPIで完結する**: 同じ reviewSubmission の REJECTED item を `PATCH /v1/reviewSubmissionItems/{itemId}` `attributes.resolved:true` → item が READY_FOR_REVIEW に戻る → `PATCH /v1/reviewSubmissions/{id}` `submitted:true` で WAITING_FOR_REVIEW。⚠️先に `submitted:true` だけ叩くと「Version is not ready to be submitted yet, please try again later」(409)＝ミスリード。REJECTED item の DELETE は「already submitted」409、別submissionへの追加は ITEM_PART_OF_ANOTHER_SUBMISSION 409。`asc.py submit` が空のsubmissionを作って放置することがある（cancelもできない）→ 実害なし。
+- **初回IAP/サブスク同梱の正解手順(UI+API混在)**: (1) ASC Web でサブスク/IAP の「審査用に追加」→ 既存の下書き(提出物)を選ぶ（**サブスクはグループだけでなく各サブスク本体も追加必須**。グループのみだと「そのグループに属する自動更新サブスクリプションとともに提出する必要」で提出ボタンが死ぬ） (2) その下書き id に API で `POST /v1/reviewSubmissionItems`(appStoreVersion) を足す（201で通る） (3) 右下「提出物の下書き」→「審査へ提出」。ASC の `/distribution/iaps` `/subscriptions/{id}` は**直URLだと白紙**→ version ページからサイドバー経由で遷移する。
+- **ストアから消す(Remove from sale)は `PATCH /v1/territoryAvailabilities/{id}` `available:false` を全地域に**（175件/アプリ・約7分/アプリ）。`POST /v2/appAvailabilities` は既存アプリで **409 "already exists"**（作成専用）。地域一覧= `GET /v2/appAvailabilities/{appId}/territoryAvailabilities?limit=200`。戻しは同PATCHで true。検証は available の件数を数える。道具= `~/dev/lily-ios-tools/remove_from_sale.py`（dry-run既定・`--apply`）。

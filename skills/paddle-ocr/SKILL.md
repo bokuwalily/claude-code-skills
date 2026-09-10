@@ -8,12 +8,14 @@ version: 1.0.0
 
 # PaddleOCR ローカルOCR
 
-完全ローカル・無料。永続venv: `~/oss-trial/paddleocr/`（py3.12、モデルは`~/.paddlex`にキャッシュ）。
+> ⚠️ **実体は削除済み（2026-07-03・本人承認）**: venvとCLI `ocr.py` は消滅。このskillは**再構築手順書＋検証済み知見**として保持。再構築: `uv venv -p 3.12 ~/dev/paddleocr/.venv && .venv/bin/pip install paddleocr`（モデルキャッシュ `~/.paddlex` は生存＝再DL不要）。`ocr.py` は本書の出力仕様（text/JSON両モード・box+score）を参考に再作成。以下のパス記述は当時のもの。
+
+完全ローカル・無料。永続venv: `~/archive/retired-projects/oss-trial/paddleocr/`（py3.12、モデルは`~/.paddlex`にキャッシュ）。
 
 ## Procedure
 
 ```bash
-cd ~/oss-trial/paddleocr
+cd ~/archive/retired-projects/oss-trial/paddleocr
 
 # プレーンテキスト（1行=1領域、[信頼度] 本文）
 .venv/bin/python ocr.py <画像orPDF> --lang japan
@@ -36,12 +38,12 @@ cd ~/oss-trial/paddleocr
 - **単語間スペース欠落**: `Thank you`→`Thankyou`。CJKは元々スペース無いので通常問題なし。英文は後処理で補う
 - **低信頼行は0.85前後で自己申告**: `--min-score`で機械的に弾ける。怪しい行はscoreを見る
 - **Python 3.14不可**: paddlepaddleのホイールが無い。venvは3.12固定（`uv venv --python 3.12`）
-- `/tmp`に作らない（揮発）。venvは`~/oss-trial/paddleocr`に永続化済
+- `/tmp`に作らない（揮発）。venvは`~/archive/retired-projects/oss-trial/paddleocr`に退避中（元は~/oss-trial）
 
 ## Verification
 
 ```bash
-cd ~/oss-trial/paddleocr
+cd ~/archive/retired-projects/oss-trial/paddleocr
 .venv/bin/python ocr.py ocr_test.png --lang japan
 # 期待: 5行抽出、請求書ヘッダ0.97/会社名0.98/合計金額0.86(低=桁注意)/支払期限0.96/英文0.98
 ```

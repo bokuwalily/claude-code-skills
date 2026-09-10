@@ -33,3 +33,6 @@ disallowed-tools: Agent
 - `cost-log.jsonl` の sum と `cost-summary.sh 7d` の合計が一致。
 - 同セッションを 2 回走らせて重複追記されないことを確認 (session_id で dedupe)。
 - Opus / Sonnet / Haiku 混在セッションで `models` 配列に全部出ているか。
+
+## See Also
+-  — ccusage CLIによるリアルタイム残量/Burn rate確認（5hブロック監視・statusline連携はこちら）

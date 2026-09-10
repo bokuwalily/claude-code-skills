@@ -1,6 +1,6 @@
 # claude-code-skills
 
-**75 battle-tested [Claude Code](https://claude.com/claude-code) skills**, extracted from shipping 20+ iOS apps, web apps and Chrome extensions solo — each one born from a real failure or a workflow repeated enough times to be worth capturing. None are speculative.
+**100 battle-tested [Claude Code](https://claude.com/claude-code) skills**, extracted from shipping 20+ iOS apps, web apps and Chrome extensions solo — each one born from a real failure or a workflow repeated enough times to be worth capturing. None are speculative.
 
 A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / ## Verification` structure. Claude Code loads it automatically and follows it when the situation matches the description. Drop the folders you want into `~/.claude/skills/` and you're done.
 
@@ -8,16 +8,17 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 
 ## Categories
 
-- [Claude Code internals — hooks, plugins, cost, model routing](#claude-code-internals--hooks-plugins-cost-model-routing) (21)
-- [macOS & launchd](#macos--launchd) (3)
-- [Web — Next.js & Vercel](#web--nextjs--vercel) (11)
-- [iOS / Expo / App Store](#ios--expo--app-store) (5)
+- [Claude Code internals — hooks, plugins, cost, model routing](#claude-code-internals--hooks-plugins-cost-model-routing) (26)
+- [macOS & launchd](#macos--launchd) (8)
+- [Web — Next.js & Vercel](#web--nextjs--vercel) (13)
+- [iOS / Expo / App Store](#ios--expo--app-store) (8)
 - [Chrome extensions (MV3)](#chrome-extensions-mv3) (2)
 - [Cloudflare Workers](#cloudflare-workers) (1)
 - [Game dev — Phaser 3](#game-dev--phaser-3) (4)
 - [Local & free AI media — image / video / music / TTS / OCR](#local--free-ai-media--image--video--music--tts--ocr) (8)
 - [Google APIs & SEO](#google-apis--seo) (3)
-- [Automation & content ops](#automation--content-ops) (17)
+- [Automation & content ops](#automation--content-ops) (25)
+- [Writing & content quality](#writing--content-quality) (2)
 
 ## Claude Code internals — hooks, plugins, cost, model routing
 
@@ -44,6 +45,11 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 | [`transcript-usage-cost-tally`](skills/transcript-usage-cost-tally/SKILL.md) | When tallying per-session token costs from transcript JSONL via Stop hook with official USD pricing. |
 | [`self-fusion-multimodel-panel`](skills/self-fusion-multimodel-panel/SKILL.md) | When running local multi-model consensus without paid OpenRouter — Claude views plus Codex as a judgment panel. |
 | [`project-exploration-patterns`](skills/project-exploration-patterns/SKILL.md) | When entering an unfamiliar codebase and need fast orientation using ls, grep, find, and tree patterns. |
+| [`conversation-log-append-pattern`](skills/conversation-log-append-pattern/SKILL.md) | When appending structured "Phase" entries to an autonomous agent's improvement log in Markdown. |
+| [`insights-to-claude-md`](skills/insights-to-claude-md/SKILL.md) | When systematically improving CLAUDE.md from a Claude Code /insights friction report or a repeated correction pattern. |
+| [`memory-md-inject-bloat-audit`](skills/memory-md-inject-bloat-audit/SKILL.md) | When a Claude Code session's context-injection budget is dominated by an oversized MEMORY.md, diagnose and trim it. |
+| [`pre-completion-self-audit`](skills/pre-completion-self-audit/SKILL.md) | When finishing an implementation, run an adversarial self-audit — concurrency, failure paths, idempotency, edges, secrets, real verification — before declaring it done. |
+| [`visual-self-verify-agent-loop`](skills/visual-self-verify-agent-loop/SKILL.md) | When delegating visual, 3D/WebGL, or UI-polish work to a subagent that builds, screenshots, and views its own output in a loop until explicit acceptance criteria pass. |
 
 ## macOS & launchd
 
@@ -52,6 +58,11 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 | [`cron-to-launchd-macos`](skills/cron-to-launchd-macos/SKILL.md) | When crontab jobs silently never run on macOS Sequoia/Tahoe — migrate them to launchd plist. |
 | [`launchd-exit78-exconfig-debug`](skills/launchd-exit78-exconfig-debug/SKILL.md) | When a launchd job loops with exit code 78 (EX_CONFIG) and never actually spawns a process. |
 | [`codesign-keychain-prompt-fix`](skills/codesign-keychain-prompt-fix/SKILL.md) | When iOS codesign keychain dialogs block or hang during fastlane or xcodebuild, especially with concurrent builds. |
+| [`execution-budget-vs-caps`](skills/execution-budget-vs-caps/SKILL.md) | When a launchd or cron automation gets silently SIGKILLed because caps times per-item delay or size exceeds its execution window. |
+| [`machine-wide-api-ratelimit-latch`](skills/machine-wide-api-ratelimit-latch/SKILL.md) | When multiple launchd jobs on one machine hit the same external API's rate limit and keep re-triggering it — coordinate via a shared blockedUntil latch file. |
+| [`migrate-icloud-desktop-assets`](skills/migrate-icloud-desktop-assets/SKILL.md) | When Desktop/iCloud sync causes file-read failures or duplicate-posting risk, safely relocate assets out of an iCloud-synced Desktop while preserving absolute-path references. |
+| [`terminal-grid8-tiling`](skills/terminal-grid8-tiling/SKILL.md) | When asked to tile Terminal.app windows into an 8-way grid on an ultrawide display via osascript. |
+| [`zsh-reserved-variable-traps`](skills/zsh-reserved-variable-traps/SKILL.md) | When a zsh script silently fails to assign a read-only reserved variable like status=$? — safe naming patterns and which variables are reserved. |
 
 ## Web — Next.js & Vercel
 
@@ -68,6 +79,8 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 | [`nextauth-local-e2e-session`](skills/nextauth-local-e2e-session/SKILL.md) | When running Playwright E2E tests locally against a next-auth Google OAuth app without touching production DB. |
 | [`webapp-legal-contact-pages`](skills/webapp-legal-contact-pages/SKILL.md) | When adding LP, contact form, privacy policy, and terms pages to a new webapp or web game. |
 | [`xff-ip-dedup-bypass`](skills/xff-ip-dedup-bypass/SKILL.md) | When reviewing rate-limiting code that trusts the leftmost X-Forwarded-For entry, which clients can spoof. |
+| [`site-ttp-from-reference`](skills/site-ttp-from-reference/SKILL.md) | When asked to clone a reference site's look — screenshot it, measure its actual CSS, tokenize it, then implement from the tokens. |
+| [`vercel-blob-private-store-cli`](skills/vercel-blob-private-store-cli/SKILL.md) | When creating a private Vercel Blob store and wiring it into a project entirely via CLI/API, no GUI. |
 
 ## iOS / Expo / App Store
 
@@ -78,6 +91,9 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 | [`ios-permission-key-security-matrix`](skills/ios-permission-key-security-matrix/SKILL.md) | When security-reviewing iOS project.yml or Info.plist diffs to classify each NSXxx key by access level. |
 | [`ios-sim-store-screenshots`](skills/ios-sim-store-screenshots/SKILL.md) | When capturing App Store screenshots from an iOS simulator and compositing them into marketing frames with PIL. |
 | [`webapp-to-expo-ios-2repo`](skills/webapp-to-expo-ios-2repo/SKILL.md) | When porting a Next.js+Turso web SaaS to iOS native using a two-repo Expo client strategy. |
+| [`design-token-migration-rn`](skills/design-token-migration-rn/SKILL.md) | When retrofitting design tokens (spacing, type scale, radius, shadow) onto a shipped Expo/React Native app without changing how it looks. |
+| [`xcodegen-project-yml-security-review`](skills/xcodegen-project-yml-security-review/SKILL.md) | When security-reviewing an XcodeGen project.yml diff for build-number, Info.plist key, and permission-string changes. |
+| [`xcodegen-storekit2-local-test`](skills/xcodegen-storekit2-local-test/SKILL.md) | When wiring a .storekit config into project.yml via XcodeGen's storeKitConfiguration to test in-app purchases locally without real billing. |
 
 ## Chrome extensions (MV3)
 
@@ -143,6 +159,21 @@ A *skill* is a Markdown file (`SKILL.md`) with a `## Procedure / ## Pitfalls / #
 | [`book-to-skill`](skills/book-to-skill/SKILL.md) | When converting books or documents (PDF, EPUB, DOCX, Markdown) into structured agent skills for Claude. |
 | [`codebase-to-course`](skills/codebase-to-course/SKILL.md) | When turning any codebase into an interactive single-page HTML course for non-technical stakeholders. |
 | [`nothing-design`](skills/nothing-design/SKILL.md) | When the user explicitly requests "Nothing style" or "Nothing design" to apply the Nothing Phone aesthetic. |
+| [`automation-bool-selector-pitfalls`](skills/automation-bool-selector-pitfalls/SKILL.md) | When a Playwright/Puppeteer/Selenium automation lane silently breaks — check for dropped boolean return values and selectors that scan the whole document first. |
+| [`automation-stale-cooldown-flag`](skills/automation-stale-cooldown-flag/SKILL.md) | When an automation script keeps skipping runs after a platform rate limit has already cleared, diagnose and fix the stale self-set cooldown flag. |
+| [`cross-automation-shared-resource-kill`](skills/cross-automation-shared-resource-kill/SKILL.md) | When one automation is silently destroying another automation's persistent state (session, cookies, DB locks, cache) across separate repos. |
+| [`md-to-docx-report`](skills/md-to-docx-report/SKILL.md) | When converting a Markdown document (headings, tables, lists, bold, quotes) into a distributable .docx and verifying key figures survived the conversion. |
+| [`metric-source-attribution`](skills/metric-source-attribution/SKILL.md) | When an automation script outputs a count, rate, or percentage, always pair it with what was counted and the denominator. |
+| [`pending-accumulation-guard`](skills/pending-accumulation-guard/SKILL.md) | When an async job queue's retry/requeue loop never increments a persisted failure counter, so jobs get stuck "pending" forever instead of failing. |
+| [`solomaker-html-paste`](skills/solomaker-html-paste/SKILL.md) | When publishing Markdown to solomaker.dev and headings, bold, or lists don't render — format it so a plain paste keeps its structure. |
+| [`web-automation-false-success-guard`](skills/web-automation-false-success-guard/SKILL.md) | When a web auto-posting script reports success but nothing was actually published — three false-success patterns and how to guard against them. |
+
+## Writing & content quality
+
+| Skill | Use when |
+|---|---|
+| [`asd-ste100`](skills/asd-ste100/SKILL.md) | When English text must be parsed without a human to resolve ambiguity (tool descriptions, error messages, system prompts) — rewrite it with Simplified Technical English (STE100) rules. |
+| [`humanizer`](skills/humanizer/SKILL.md) | When editing or reviewing text to remove signs of AI-generated writing — inflated symbolism, promotional language, em dash overuse, filler phrases. |
 
 ## Install
 

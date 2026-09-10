@@ -83,3 +83,25 @@ disallowed-tools: Agent Edit
   最新の deployment が production ドメインに紐付いていること。
 
 - 念のためブラウザ実 URL でも確認（キャッシュ・edge 反映遅延の可能性）。
+
+## 罠: サブディレクトリのサイトが `../data` を読む構成（2026-07-05 asia-selectで発見）
+
+site/ の中から `resolve(process.cwd(), '../data', ...)` 等でリポジトリルートのデータを読む構成は、
+site/ ディレクトリから `vercel deploy` するとビルド失敗する（アップロードに ../data が含まれない）。
+
+**直し方**: リポジトリルートに vercel.json を置き、ルートからデプロイする:
+```json
+{
+  "installCommand": "cd site && npm install",
+  "buildCommand": "cd site && npm run build",
+  "outputDirectory": "site/dist",
+  "framework": null
+}
+```
+site/.vercel が残っていると古いプロジェクトにリンクされるので `rm -rf site/.vercel` してからルートで deploy。
+
+## 罠: vercel domains add はプロジェクトlink済みなら単一引数（CLI v53）
+
+`vercel domains add <domain> <project>` の2引数形式は "missing_arguments" エラーになる。
+リンク済みディレクトリで `vercel domains add <domain> --scope <team>` と単一引数で実行する。
+bokuwalily.com 配下のサブドメインなら DNS は自動設定され、数十秒で200になる。

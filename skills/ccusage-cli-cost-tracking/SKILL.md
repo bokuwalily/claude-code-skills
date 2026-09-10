@@ -34,3 +34,6 @@ disallowed-tools: Agent Edit Write
 - `ccusage blocks --active --json | jq '.blocks[0].tokenCounts'` で生値確認
 - statusline で `5h:Nk(cost)` 表示成功
 - cost-guard hook が 800k 超で WARN を stderr に出すこと
+
+## See Also
+-  — transcript JSONL直集計によるセッション後コスト集計（ccusageが使えない環境のフォールバック/事後精算はこちら）

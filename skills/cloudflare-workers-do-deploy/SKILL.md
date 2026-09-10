@@ -21,7 +21,7 @@ Cloudflare全部入り(Workers + Durable Objects + D1 + SPAアセット)の本�
 
 ## Pitfalls
 
-- **サブドメインに個人情報が乗る**: アカウントサブドメインは初期値がメール由来(例 `your-handle`)。公開URLに旧ハンドルが出る→**ダッシュボード「Change account subdomain」でブランド名に変更**。⚠️**APIの PUT `/accounts/{id}/workers/subdomain` は既存だと `10036` で変更不可＝GUI必須**。⚠️**アカウント単位**＝全Workerが `*.<新サブドメイン>.workers.dev` になるのでアプリ名でなくブランド名(例 `bokuwalily`)にする。
+- **サブドメインに個人情報が乗る**: アカウントサブドメインは初期値がメール由来(例 `you-phone`)。公開URLに旧ハンドルが出る→**ダッシュボード「Change account subdomain」でブランド名に変更**。⚠️**APIの PUT `/accounts/{id}/workers/subdomain` は既存だと `10036` で変更不可＝GUI必須**。⚠️**アカウント単位**＝全Workerが `*.<新サブドメイン>.workers.dev` になるのでアプリ名でなくブランド名(例 `bokuwalily`)にする。
 - **新サブドメインのTLS証明書発行に10〜15分**。`dig` は引けるのに `curl` が `sslv3 alert handshake failure / http_code=000` になる＝証明書待ち。**deploy自体は証明書と無関係に成功する**ので、待つ間に sitemap/GA4/secret 等を進める。証明書発行直後の**初回WS接続もコールドスタートで数分遅い**(E2Eが2分超過しても少し後に再実行で通る)。
 - **var と secret の名前衝突**: `wrangler.toml [vars] NAME=""` を残したまま `secret put NAME` すると `10053 Binding name already in use`。→ tomlから該当varを**消して再デプロイ**してから secret put。
 - **`wrangler subdomain` コマンドは非推奨**(deprecated)。サブドメイン操作はGUIへ。

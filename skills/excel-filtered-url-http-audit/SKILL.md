@@ -26,7 +26,7 @@ filter_col = headers.index("推奨CTA") + 1     # 絞り込み列
 
 target_urls = []
 for row in ws.iter_rows(min_row=2, values_only=True):
-    if row[filter_col - 1] == "ABABA":        # 絞り込み条件
+    if row[filter_col - 1] == "TARGET":        # 絞り込み条件
         url = row[url_col - 1]
         if url:
             target_urls.append(url)

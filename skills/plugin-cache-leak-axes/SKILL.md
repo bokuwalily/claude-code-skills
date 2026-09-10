@@ -108,3 +108,16 @@ enablement の有無で **削除** 判断はしない（ただし軸6の uninsta
 ## 軸2 スクリプト名の訂正（Phase45）
 - Phase44 で「`prune-plugin-stale-versions.sh` が現存せず」と記録したが**glob の見間違い**。
   正しい実ファイル名は `prune-stale-plugin-versions.sh`（stale が先）。存在し dry-run 走査可能。
+
+## 手動掃除の補足（旧 plugins-cache-gc / prune-plugin-clone-temp から吸収）
+- **prune-plugin-clone-temp.sh の引数**: `[MIN_AGE_MIN]`（既定60分）。それより新しい temp は
+  in-flight install 保護で温存される。実行後 `~/.claude/scripts/dotfiles-snapshot.sh` で snapshot。
+- **bash 3.2 制約**: macOS 既定 bash では `mapfile`/`readarray` 不可。残骸処理は `find -exec` で書くこと。
+- **削除後に MCP サーバ起動エラー**が出たら Claude Code 再起動 → cache は自動再 fetch される
+  （最新版のみ残せばリカバリ可能）。
+- 重複名 plugin（sap-cds-mcp / cds-mcp 等）は `diff -rq` で同一内容か確認してから判断。
+
+## 実績ログ
+- 2026-05-31 Phase19: 3.0GB→2.0GB（temp_git_* 20個92MB + chrome-devtools-mcp 旧3世代~900MB）
+- 2026-05-31 clone-temp 初回: temp_subdir 44残骸 262M 回収、2.0G→1.8G
+- 2026-06 Phase42: 9 dir/1.2M、Phase45: disabled 61M/11 dir、Phase46: temp_git 50M/114 dir

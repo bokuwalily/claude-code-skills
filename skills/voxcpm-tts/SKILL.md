@@ -8,12 +8,14 @@ version: 1.0.0
 
 # VoxCPM ローカル音声合成(TTS)
 
-OpenBMB製・完全ローカル・無料。永続: `~/oss-trial/VoxCPM/`（py3.11、MPS、モデル`openbmb/VoxCPM2`は`~/.cache/huggingface`）。
+> ⚠️ **実体は削除済み（2026-07-03・本人承認）**: リポジトリ・venv・CLI `tts.py` は消滅。このskillは**再構築手順書＋検証済み知見**として保持。再構築: OpenBMB/VoxCPMを再clone→`uv venv -p 3.11`＋pip install（**Python3.14はtorch不可・3.11必須**。モデル `openbmb/VoxCPM2` は `~/.cache/huggingface` に生存＝再DL不要）。`tts.py`（text→48kHz WAV・--refで声クローン）は本書仕様で再作成。以下のパス記述は当時のもの。
+
+OpenBMB製・完全ローカル・無料。永続: `~/archive/retired-projects/oss-trial/VoxCPM/`（py3.11、MPS、モデル`openbmb/VoxCPM2`は`~/.cache/huggingface`）。
 
 ## Procedure
 
 ```bash
-cd ~/oss-trial/VoxCPM
+cd ~/archive/retired-projects/oss-trial/VoxCPM
 
 # 基本: テキスト→WAV
 .venv/bin/python tts.py "読み上げる文" -o out.wav
@@ -41,7 +43,7 @@ cd ~/oss-trial/VoxCPM
 ## Verification
 
 ```bash
-cd ~/oss-trial/VoxCPM
+cd ~/archive/retired-projects/oss-trial/VoxCPM
 .venv/bin/python tts.py "これはテストです。" -o /tmp/voxcpm_check.wav
 .venv/bin/python -c "import soundfile as sf;w,sr=sf.read('/tmp/voxcpm_check.wav');print(f'{len(w)/sr:.1f}s @ {sr}Hz')"
 # 期待: 数秒のWAV @ 48000Hz が生成される

@@ -16,6 +16,16 @@ ChromeがRAFを激しく throttle し `game.loop` がほぼ停止する。結果
 
 **対策：ゲームループを手動でポンプして決定論的に時間を進める。**
 
+0. **前提準備（旧 phaser3-scene-debug-console から吸収）**: シーンとゲーム本体を dev handle で公開する。
+   ```ts
+   // GameScene.ts の create() 末尾（DEV限定で）
+   (window as any).scene = this;
+   ```
+   コンソールで `typeof window.scene !== 'undefined'` → true、`window.scene.constructor.name` → クラス名で公開成功を確認。
+   これで `window.scene.player.attack(target)` / `gainXP(999)` 等のロジック直呼び検証ができる。
+   本番ビルド前に `grep -rn "window as any" src/` で公開行を削除すること。
+   注意: devtools の console にフォーカスがあるとキーイベントがゲームに届かない（`focus()` を確認）。
+
 1. dev handle でゲーム本体を公開しておく（`window.__game = game` 等、`import.meta.env.DEV`内）
 
 2. 状態遷移やタイマーを進めたいときは `game.loop.step()` を実時間タイムスタンプを
@@ -53,7 +63,7 @@ ChromeがRAFを激しく throttle し `game.loop` がほぼ停止する。結果
 - `game.loop.step()` はRAFと二重に走り得るが、検証用途では許容。終わったらリロードでクリーン化。
 - 実プレイ確認は「クラッシュしない」だけでなく、遷移後に期待UI(HUD等)が `RUNNING` かつ
   screenshotで視認できることまで見る（スモークテストで終わらせない）。
-- 関連: （手動コンソール用にsceneを公開する基本形）。
+- 手動コンソール用の scene 公開の基本形は Procedure 0 参照（旧 phaser3-scene-debug-console を吸収済み）。
 
 ## Verification
 

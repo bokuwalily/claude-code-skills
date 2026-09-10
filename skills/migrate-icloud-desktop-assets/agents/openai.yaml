@@ -1,0 +1,4 @@
+interface:
+  display_name: "Migrate iCloud Desktop Assets"
+  short_description: "Move iCloud-synced assets without breaking consumers"
+  default_prompt: "Use $migrate-icloud-desktop-assets to relocate synced media safely and verify every consumer."
